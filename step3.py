@@ -2,13 +2,10 @@ import cv2 as cv
 import numpy as np
 import os
 
-# shape distance
+# shape (for- vs. back-ground) distance
 
 # Set the directory where the images are located
 image_dir = './data/images/'
-
-# Set the number of bits for each channel
-bits = 6  # Change this value to find the "Goldilocks" choice
 
 # Load the crowdsource data
 crowd_data = np.loadtxt('./data/Crowd.txt', dtype = np.int32)
@@ -46,11 +43,14 @@ for i in range(1, 41):
         # Convert the query image to grayscale
         query_image = (query_image[:,:,0] + query_image[:,:,1] + query_image[:,:,2]) / 3.0
 
-        # Set the threshold value
-        threshold_value = 25
+        # Apply Laplacian filter
+        # query_image = cv.Laplacian(query_image, cv.CV_64F)
+
+        # Set the threshold values
+        low_threshold_value = 21
 
         # Convert the image to binary black and white
-        query_binary_image = cv.threshold(query_image, threshold_value, 255, cv.THRESH_BINARY)[1]
+        query_binary_image = cv.threshold(query_image, low_threshold_value, 255, cv.THRESH_BINARY)[1]
 
         # Iterate through all the target images in the directory
         for j in range(1, 41):
@@ -70,14 +70,26 @@ for i in range(1, 41):
                 # Convert the target image to grayscale
                 target_image = (target_image[:,:,0] + target_image[:,:,1] + target_image[:,:,2]) / 3.0
 
+                # Apply Laplacian filter
+                # target_image = cv.Laplacian(target_image, cv.CV_64F)
+
                 # Convert the image to binary black and white
-                target_binary_image = cv.threshold(target_image, threshold_value, 255, cv.THRESH_BINARY)[1]
+                target_binary_image = cv.threshold(target_image, low_threshold_value, 255, cv.THRESH_BINARY)[1]
 
                 # Compute the element-wise absolute difference between the images
                 abs_diff = cv.absdiff(query_binary_image, target_binary_image)
 
                 # Compute the normalized overlap distance
                 distance = np.sum(abs_diff) / (2 * 60 * 89)
+
+                # # Compute the element-wise XOR of the two images
+                # diff = cv.bitwise_xor(query_binary_image, target_binary_image)
+                #
+                # # Count the number of non-zero pixels in the difference image
+                # diff_pixels = np.count_nonzero(diff)
+                #
+                # # Compute the normalized overlap distance
+                # distance = diff_pixels / (2 * 60 * 89)
 
                 # Append the similarity score to the list for the query image
                 similarity_scores[query_file].append([distance, target_file])
