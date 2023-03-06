@@ -23,7 +23,7 @@ similarity_scores = {}
 grand_total = 0;
 
 # Create and write in the HTML file
-with open("results.html", "w") as file:
+with open("step1_results.html", "w") as file:
     file.write("<html>\n")
     file.write("<head>\n")
     file.write("<title>Color Similarity Results</title>\n")
@@ -100,17 +100,7 @@ for i in range(1, 41):
         print('\tTotal score:', total_score)
         print('\tTop 3 similar images:', ', '.join(similar_images))
 
-        # write results to HTML file
-        # if i == 1:
-            # # create the HTML file
-            # with open("results.html", "w") as file:
-            #     file.write("<html>\n")
-            #     file.write("<head>\n")
-            #     file.write("<title>Similarity Results</title>\n")
-            #     file.write("</head>\n")
-            #     file.write("<body>\n")
-
-        with open("results.html", "a") as file:
+        with open("step1_results.html", "a") as file:
             file.write("<p>Query image: {}</p>\n".format(query_file[1:3]))
             file.write("<p>Total score: {}</p>\n".format(total_score))
             file.write("<div>\n")
@@ -135,7 +125,7 @@ grand_score = grand_total / 25200 * 100  # Goal: between 30% - 40%
 
 if i == 40:
     # close the HTML file
-    with open("results.html", "a") as file:
+    with open("step1_results.html", "a") as file:
         file.write("<p>Grand score: {}%</p>\n".format(grand_score))
         file.write("</body>\n")
         file.write("</html>\n")
