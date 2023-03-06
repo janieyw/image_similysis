@@ -25,6 +25,7 @@ with open("step2_results.html", "w") as file:
     file.write("<head>\n")
     file.write("<title>Texture Similarity Results</title>\n")
     file.write("<h1>Texture Similarity Results</h1>\n")
+    file.write("<p><strong>NOTE</strong>: The grand score and happiness score are displayed at the very end of the file.</p>\n")
     file.write("</head>\n")
     file.write("<body>\n")
 
