@@ -123,9 +123,12 @@ for i in range(1, 41):
 
 grand_score = grand_total / 25200 * 100  # Goal: between 30% - 40%
 
+# print to console
+print('Grant score:', grand_score)
+
 if i == 40:
     # close the HTML file
     with open("step1_results.html", "a") as file:
-        file.write("<p>Grand score: {}%</p>\n".format(grand_score))
+        file.write("<h3>Grand score: {}%</h3>\n".format(grand_score))
         file.write("</body>\n")
         file.write("</html>\n")

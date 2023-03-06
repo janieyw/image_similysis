@@ -8,16 +8,25 @@ import os
 image_dir = './data/images/'
 
 # Set the number of bits for each channel
-bits = 5  # Change this value to find the "Goldilocks" choice
-
-# Set the number of bins for each channel
-bins = 2 ** bits
+bits = 6  # Change this value to find the "Goldilocks" choice
 
 # Load the crowdsource data
 crowd_data = np.loadtxt('./data/Crowd.txt', dtype = np.int32)
 
 # Initialize the similarity scores dictionary
 similarity_scores = {}
+
+# Initialize the grand total
+grand_total = 0;
+
+# Create and write in the HTML file
+with open("step2_results.html", "w") as file:
+    file.write("<html>\n")
+    file.write("<head>\n")
+    file.write("<title>Texture Similarity Results</title>\n")
+    file.write("<h1>Texture Similarity Results</h1>\n")
+    file.write("</head>\n")
+    file.write("<body>\n")
 
 # Iterate through all the query images in the directory
 for i in range(1, 41):
@@ -39,15 +48,8 @@ for i in range(1, 41):
         # Apply Laplacian filter
         query_laplacian = cv.Laplacian(query_image, cv.CV_64F)
 
-        # # Compute absolute values of Laplacian pixels
-        # abs_query_laplacian = np.abs(query_image)
-
         # Compute histogram
-        query_hist, query_bins = np.histogram(query_laplacian.flatten(), bins = 128, range=(0, 128))
-
-        # Normalize the query histogram
-        # query_hist = cv.normalize(query_hist, None)
-        # query_hist = cv.normalize(query_hist, query_hist, alpha=0, beta=1, norm_type=cv.NORM_MINMAX)
+        query_hist, query_bins = np.histogram(abs(query_laplacian.flatten()), bins = 2 ** bits, range=(0, 255))
 
         # Iterate through all the target images in the directory
         for j in range(1, 41):
@@ -68,14 +70,10 @@ for i in range(1, 41):
                 target_image = (target_image[:,:,0] + target_image[:,:,1] + target_image[:,:,2]) / 3.0
 
                 # Apply Laplacian filter
-                target_laplacian = cv.Laplacian(query_image, cv.CV_64F)
+                target_laplacian = cv.Laplacian(target_image, cv.CV_64F)
 
                 # Compute histogram
-                target_hist, target_bins = np.histogram(target_laplacian.flatten(), bins=128, range=(0, 128))
-
-                # Normalize the target histogram
-                # target_hist = cv.normalize(target_hist, None)
-                # target_hist = cv.normalize(target_hist, target_hist, alpha=0, beta=1, norm_type=cv.NORM_MINMAX)
+                target_hist, target_bins = np.histogram(abs(target_laplacian.flatten()), bins = 2 ** bits, range=(0, 255))
 
                 # Compute the normalized L1 distance between the query and target histograms
                 # distance = cv.norm(query_hist, target_hist, cv.NORM_L1)
@@ -98,8 +96,43 @@ for i in range(1, 41):
             # Compute the score for the target image based on the crowdsource data
             similar_images.append(similarity_scores[query_file][k][1])
 
+        # Add total score for a row to the grand total
+        grand_total += total_score
+
         # print to console
         print('Query image:', query_file)
         print('\tTotal score:', total_score)
         print('\tTop 3 similar images:', ', '.join(similar_images))
 
+        with open("step2_results.html", "a") as file:
+            file.write("<p>Query image: {}</p>\n".format(query_file[1:3]))
+            file.write("<p>Total score: {}</p>\n".format(total_score))
+            file.write("<div>\n")
+            query_path = os.path.join(image_dir, 'i{:02d}.jpg'.format(i))
+            file.write("<div style='display:flex;'>\n")
+            file.write("<img src='{}' height='80px' style='margin-right: 60px;'>\n".format(query_path))
+
+            for idx, sim_img in enumerate(similar_images):
+                sim_path = os.path.join(image_dir, 'i{}.jpg'.format(sim_img[1:3]))
+                crowd_count = crowd_data[i - 1][int(sim_img[1:3]) - 1]
+                score = crowd_count / (idx + 1)
+                file.write("<div>\n")
+
+                file.write("<img src='{}' height='80px' style='margin-right: 40px;'>\n".format(sim_path))
+                file.write("<p>Similar image {}: {}</p>\n".format(idx + 1, sim_img[1:3]))
+                file.write("<p>(Crowd count: {})</p>\n".format(crowd_count))
+                file.write("</div>\n")
+
+            file.write("</div>\n")
+
+grand_score = grand_total / 25200 * 100  # Goal: between 30% - 40%
+
+# print to console
+print('Grant score:', grand_score)
+
+if i == 40:
+    # close the HTML file
+    with open("step2_results.html", "a") as file:
+        file.write("<h3>Grand score: {}%</h3>\n".format(grand_score))
+        file.write("</body>\n")
+        file.write("</html>\n")
