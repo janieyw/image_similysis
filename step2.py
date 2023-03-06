@@ -8,7 +8,7 @@ import os
 image_dir = './data/images/'
 
 # Set the number of bits for each channel
-bits = 6  # Change this value to find the "Goldilocks" choice
+bits = 5  # Change this value to find the "Goldilocks" choice
 
 # Set the number of bins for each channel
 bins = 2 ** bits
@@ -36,12 +36,18 @@ for i in range(1, 41):
         # Convert the query image to grayscale
         query_image = (query_image[:,:,0] + query_image[:,:,1] + query_image[:,:,2]) / 3.0
 
-        # Calculate the 3D color histogram for the query image
-        query_hist = cv.calcHist([query_image], [0, 1, 2], None, [bins, bins, bins], [0, 2 ** bits, 0, 2 ** bits, 0, 2 ** bits])
+        # Apply Laplacian filter
+        query_laplacian = cv.Laplacian(query_image, cv.CV_64F)
+
+        # # Compute absolute values of Laplacian pixels
+        # abs_query_laplacian = np.abs(query_image)
+
+        # Compute histogram
+        query_hist, query_bins = np.histogram(query_laplacian.flatten(), bins = 128, range=(0, 128))
 
         # Normalize the query histogram
         # query_hist = cv.normalize(query_hist, None)
-        query_hist = cv.normalize(query_hist, query_hist, alpha=0, beta=1, norm_type=cv.NORM_MINMAX)
+        # query_hist = cv.normalize(query_hist, query_hist, alpha=0, beta=1, norm_type=cv.NORM_MINMAX)
 
         # Iterate through all the target images in the directory
         for j in range(1, 41):
@@ -61,12 +67,15 @@ for i in range(1, 41):
                 # Convert the target image to grayscale
                 target_image = (target_image[:,:,0] + target_image[:,:,1] + target_image[:,:,2]) / 3.0
 
-                # Calculate the 3D color histogram for the target image
-                target_hist = cv.calcHist([target_image], [0, 1, 2], None, [bins, bins, bins], [0, 2 ** bits, 0, 2 ** bits, 0, 2 ** bits])
+                # Apply Laplacian filter
+                target_laplacian = cv.Laplacian(query_image, cv.CV_64F)
+
+                # Compute histogram
+                target_hist, target_bins = np.histogram(target_laplacian.flatten(), bins=128, range=(0, 128))
 
                 # Normalize the target histogram
                 # target_hist = cv.normalize(target_hist, None)
-                target_hist =  cv.normalize(target_hist, target_hist, alpha=0, beta=1, norm_type=cv.NORM_MINMAX)
+                # target_hist = cv.normalize(target_hist, target_hist, alpha=0, beta=1, norm_type=cv.NORM_MINMAX)
 
                 # Compute the normalized L1 distance between the query and target histograms
                 # distance = cv.norm(query_hist, target_hist, cv.NORM_L1)
@@ -93,3 +102,4 @@ for i in range(1, 41):
         print('Query image:', query_file)
         print('\tTotal score:', total_score)
         print('\tTop 3 similar images:', ', '.join(similar_images))
+
