@@ -105,34 +105,34 @@ for i in range(1, 41):
         # print('\tScore:', score)
         # print('\tTop 3 similar images:', ', '.join(similar_images))
 
-        with open("step5_results.html", "a") as file:
-            file.write("<p>Query image: <strong>{}</strong></p>\n".format(query_file[1:3]))
-            file.write("<p>Score: {}</p>\n".format(score))
-            file.write("<div>\n")
-            query_path = os.path.join(image_dir, 'i{:02d}.jpg'.format(i))
-            file.write("<div style='display:flex;'>\n")
-            file.write("<img src='{}' height='80px' style='margin-right: 60px;'>\n".format(query_path))
-
-            for idx, sim_img in enumerate(similar_images):
-                sim_path = os.path.join(image_dir, 'i{}.jpg'.format(sim_img[1:3]))
-                crowd_count = crowd_data[i - 1][int(sim_img[1:3]) - 1]
-                score = crowd_count / (idx + 1)
-                file.write("<div>\n")
-
-                file.write("<img src='{}' height='80px' style='margin-right: 40px;'>\n".format(sim_path))
-                file.write("<p>Similar image {}: {}</p>\n".format(idx + 1, sim_img[1:3]))
-                file.write("<p>(Crowd count: {})</p>\n".format(crowd_count))
-                file.write("</div>\n")
-
-            file.write("</div>\n")
-
-accuracy = total_score / 25200 * 100  # Goal: between 30% - 40%
-
-# print to console
-print('Accuracy:', accuracy)
-
-# close the HTML file
-with open("step5_results.html", "a") as file:
-    file.write("<h3>Accuracy: {}%</h3>\n".format(accuracy))
-    file.write("</body>\n")
-    file.write("</html>\n")
+#         with open("step5_results.html", "a") as file:
+#             file.write("<p>Query image: <strong>{}</strong></p>\n".format(query_file[1:3]))
+#             file.write("<p>Score: {}</p>\n".format(score))
+#             file.write("<div>\n")
+#             query_path = os.path.join(image_dir, 'i{:02d}.jpg'.format(i))
+#             file.write("<div style='display:flex;'>\n")
+#             file.write("<img src='{}' height='80px' style='margin-right: 60px;'>\n".format(query_path))
+#
+#             for idx, sim_img in enumerate(similar_images):
+#                 sim_path = os.path.join(image_dir, 'i{}.jpg'.format(sim_img[1:3]))
+#                 crowd_count = crowd_data[i - 1][int(sim_img[1:3]) - 1]
+#                 score = crowd_count / (idx + 1)
+#                 file.write("<div>\n")
+#
+#                 file.write("<img src='{}' height='80px' style='margin-right: 40px;'>\n".format(sim_path))
+#                 file.write("<p>Similar image {}: {}</p>\n".format(idx + 1, sim_img[1:3]))
+#                 file.write("<p>(Crowd count: {})</p>\n".format(crowd_count))
+#                 file.write("</div>\n")
+#
+#             file.write("</div>\n")
+#
+# accuracy = total_score / 25200 * 100  # Goal: between 30% - 40%
+#
+# # # print to console
+# # print('Accuracy:', accuracy)
+#
+# # close the HTML file
+# with open("step5_results.html", "a") as file:
+#     file.write("<h3>Accuracy: {}%</h3>\n".format(accuracy))
+#     file.write("</body>\n")
+#     file.write("</html>\n")
