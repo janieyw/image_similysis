@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 import os
 
-# shape (symmetry) distance
+# shape (symmetry) distance (Y)
 
 # Set the directory where the images are located
 image_dir = './data/images/'
@@ -115,7 +115,7 @@ for i in range(1, 41):
                 # Compute symmetry score as the average of pixel values
                 target_score = np.mean(target_diff)
 
-                # Compute the normalized overlap distance
+                # Compute the normalized distance
                 distance = np.sum(np.abs(query_score - target_score)) / (2 * 89 * 60)
 
                 # Append the similarity score to the list for the query image

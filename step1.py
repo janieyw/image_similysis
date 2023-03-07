@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 import os
 
-# color distance
+# color distance (C)
 
 # Set the directory where the images are located
 image_dir = './data/images/'

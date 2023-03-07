@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 import os
 
-# texture distance
+# texture distance (T)
 
 # Set the directory where the images are located
 image_dir = './data/images/'

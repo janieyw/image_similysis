@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 import os
 
-# shape (for- vs. back-ground) distance
+# shape (for- vs. back-ground) distance (S)
 
 # Set the directory where the images are located
 image_dir = './data/images/'
