@@ -8,13 +8,13 @@ import os
 image_dir = './data/images/'
 
 # Load the crowdsource data
-crowd_data = np.loadtxt('./data/Crowd.txt', dtype = np.int32)
+crowd_data = np.loadtxt('./data/Crowd.txt', dtype=np.int32)
 
 # Initialize the similarity scores dictionary
 similarity_scores = {}
 
 # Initialize the total score, which is the total crowd count
-total_score = 0;
+total_score = 0
 
 # Create and write in the HTML file
 with open("step3_results.html", "w") as file:
@@ -22,7 +22,8 @@ with open("step3_results.html", "w") as file:
     file.write("<head>\n")
     file.write("<title>Shape Similarity (fore- vs. back-ground) Results</title>\n")
     file.write("<h1>Shape Similarity (fore- vs. back-ground) Results</h1>\n")
-    file.write("<p><strong>NOTE</strong>: The accuracy score and happiness score are displayed at the very end of the file.</p>\n")
+    file.write("<p><strong>NOTE</strong>: The accuracy score and happiness score "
+               "are displayed at the very end of the file.</p>\n")
     file.write("</head>\n")
     file.write("<body>\n")
 
@@ -47,10 +48,10 @@ for i in range(1, 41):
         # query_image = cv.Laplacian(query_image, cv.CV_64F)
 
         # Set the threshold values
-        low_threshold_value = 21
+        threshold_value = 21
 
         # Convert the image to binary black and white
-        query_binary_image = cv.threshold(query_image, low_threshold_value, 255, cv.THRESH_BINARY)[1]
+        query_binary_image = cv.threshold(query_image, threshold_value, 255, cv.THRESH_BINARY)[1]
 
         # Iterate through all the target images in the directory
         for j in range(1, 41):
@@ -74,7 +75,7 @@ for i in range(1, 41):
                 # target_image = cv.Laplacian(target_image, cv.CV_64F)
 
                 # Convert the image to binary black and white
-                target_binary_image = cv.threshold(target_image, low_threshold_value, 255, cv.THRESH_BINARY)[1]
+                target_binary_image = cv.threshold(target_image, threshold_value, 255, cv.THRESH_BINARY)[1]
 
                 # Compute the element-wise absolute difference between the images
                 abs_diff = cv.absdiff(query_binary_image, target_binary_image)
@@ -142,9 +143,8 @@ accuracy = total_score / 25200 * 100  # Goal: between 30% - 40%
 # print to console
 print('Accuracy:', accuracy)
 
-if i == 40:
-    # close the HTML file
-    with open("step3_results.html", "a") as file:
-        file.write("<h3>Accuracy: {}%</h3>\n".format(accuracy))
-        file.write("</body>\n")
-        file.write("</html>\n")
+# close the HTML file
+with open("step3_results.html", "a") as file:
+    file.write("<h3>Accuracy: {}%</h3>\n".format(accuracy))
+    file.write("</body>\n")
+    file.write("</html>\n")

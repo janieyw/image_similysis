@@ -2,30 +2,28 @@ import cv2 as cv
 import numpy as np
 import os
 
-# texture distance
+# shape (for- vs. back-ground) distance
 
 # Set the directory where the images are located
 image_dir = './data/images/'
 
-# Set the number of bits for each channel
-bits = 6  # Change this value to find the "Goldilocks" choice
-
 # Load the crowdsource data
-crowd_data = np.loadtxt('./data/Crowd.txt', dtype = np.int32)
+crowd_data = np.loadtxt('./data/Crowd.txt', dtype=np.int32)
 
 # Initialize the similarity scores dictionary
 similarity_scores = {}
 
 # Initialize the total score, which is the total crowd count
-total_score = 0;
+total_score = 0
 
 # Create and write in the HTML file
 with open("step4_results.html", "w") as file:
     file.write("<html>\n")
     file.write("<head>\n")
-    file.write("<title>Shape (symmetry) Similarity Results</title>\n")
-    file.write("<h1>Shape (symmetry) Similarity Results</h1>\n")
-    file.write("<p><strong>NOTE</strong>: The accuracy score and happiness score are displayed at the very end of the file.</p>\n")
+    file.write("<title>Shape Similarity (symmetry) Results</title>\n")
+    file.write("<h1>Shape Similarity (symmetry) Results</h1>\n")
+    file.write("<p><strong>NOTE</strong>: The accuracy score and happiness score "
+               "are displayed at the very end of the file.</p>\n")
     file.write("</head>\n")
     file.write("<body>\n")
 
@@ -44,13 +42,28 @@ for i in range(1, 41):
         query_image = cv.imread(query_path)
 
         # Convert the query image to grayscale
-        query_image = (query_image[:,:,0] + query_image[:,:,1] + query_image[:,:,2]) / 3.0
+        query_image = (query_image[:, :, 0] + query_image[:, :, 1] + query_image[:, :, 2]) / 3.0
 
         # Apply Laplacian filter
-        query_laplacian = cv.Laplacian(query_image, cv.CV_64F)
+        # query_image = cv.Laplacian(query_image, cv.CV_64F)
 
-        # Compute histogram
-        query_hist, query_bins = np.histogram(abs(query_laplacian.flatten()), bins = 2 ** bits, range=(0, 255))
+        # Set the threshold values
+        threshold_value = 25
+
+        # Convert the image to binary black and white
+        query_binary_image = cv.threshold(query_image, threshold_value, 255, cv.THRESH_BINARY)[1]
+
+        query_left = query_binary_image[:, :43]
+        query_right = query_binary_image[:, -43:]
+
+        # Reverse the columns of the left half
+        query_mirrored_left = cv.flip(query_right, 1)
+
+        # Compute the difference between left and right halves
+        query_diff = cv.absdiff(query_left, query_mirrored_left)
+
+        # Compute symmetry score as the average of pixel values
+        query_score = np.mean(query_diff)
 
         # Iterate through all the target images in the directory
         for j in range(1, 41):
@@ -68,23 +81,35 @@ for i in range(1, 41):
                 target_image = cv.imread(target_path)
 
                 # Convert the target image to grayscale
-                target_image = (target_image[:,:,0] + target_image[:,:,1] + target_image[:,:,2]) / 3.0
+                target_image = (target_image[:, :, 0] + target_image[:, :, 1] + target_image[:, :, 2]) / 3.0
 
                 # Apply Laplacian filter
-                target_laplacian = cv.Laplacian(target_image, cv.CV_64F)
+                # target_image = cv.Laplacian(target_image, cv.CV_64F)
 
-                # Compute histogram
-                target_hist, target_bins = np.histogram(abs(target_laplacian.flatten()), bins = 2 ** bits, range=(0, 255))
+                # Convert the image to binary black and white
+                target_binary_image = cv.threshold(target_image, threshold_value, 255, cv.THRESH_BINARY)[1]
 
-                # Compute the normalized L1 distance between the query and target histograms
-                distance = np.sum(np.abs(query_hist - target_hist)) / (2 * 60 * 89)
+                target_left = target_binary_image[:, :43]
+                target_right = target_binary_image[:, -43:]
+
+                # Reverse the columns of the left half
+                target_mirrored_left = cv.flip(target_right, 1)
+
+                # Compute the difference between left and right halves
+                target_diff = cv.absdiff(target_left, target_mirrored_left)
+
+                # Compute symmetry score as the average of pixel values
+                target_score = np.mean(target_diff)
+
+                # Compute the normalized overlap distance
+                distance = (query_score - target_score) / (2 * 89 * 60)
 
                 # Append the similarity score to the list for the query image
                 similarity_scores[query_file].append([distance, target_file])
 
         # Sort the similarity scores for the query image by distance in ascending order
-        similarity_scores[query_file].sort(key = lambda x : x[0])
-        # print(similarity_scores[query_file])
+        similarity_scores[query_file].sort(key=lambda x: x[0])
+        print(similarity_scores[query_file])
 
         # Select the top 3 similar images based on distance and add up their scores
         similar_images = []
@@ -96,13 +121,13 @@ for i in range(1, 41):
             # Compute the score for the target image based on the crowdsource data
             similar_images.append(similarity_scores[query_file][k][1])
 
-        # Add score for a row to the total score
+        # Add total score for a row to the grand total
         total_score += score
 
-        # print to console
-        print('Query image:', query_file)
-        print('\tScore:', score)
-        print('\tTop 3 similar images:', ', '.join(similar_images))
+        # # print to console
+        # print('Query image:', query_file)
+        # print('\tScore:', score)
+        # print('\tTop 3 similar images:', ', '.join(similar_images))
 
         with open("step4_results.html", "a") as file:
             file.write("<p>Query image: {}</p>\n".format(query_file[1:3]))
@@ -130,9 +155,8 @@ accuracy = total_score / 25200 * 100  # Goal: between 30% - 40%
 # print to console
 print('Accuracy:', accuracy)
 
-if i == 40:
-    # close the HTML file
-    with open("step4_results.html", "a") as file:
-        file.write("<h3>Accuracy: {}%</h3>\n".format(accuracy))
-        file.write("</body>\n")
-        file.write("</html>\n")
+# close the HTML file
+with open("step4_results.html", "a") as file:
+    file.write("<h3>Accuracy: {}%</h3>\n".format(accuracy))
+    file.write("</body>\n")
+    file.write("</html>\n")

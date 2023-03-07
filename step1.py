@@ -14,13 +14,13 @@ bits = 4  # Change this value to find the "Goldilocks" choice
 bins = 2 ** bits
 
 # Load the crowdsource data
-crowd_data = np.loadtxt('./data/Crowd.txt', dtype = np.int32)
+crowd_data = np.loadtxt('./data/Crowd.txt', dtype=np.int32)
 
 # Initialize the similarity scores dictionary
 similarity_scores = {}
 
 # Initialize the total_score, which is the total crowd count
-total_score = 0;
+total_score = 0
 
 # Create and write in the HTML file
 with open("step1_results.html", "w") as file:
@@ -28,7 +28,8 @@ with open("step1_results.html", "w") as file:
     file.write("<head>\n")
     file.write("<title>Color Similarity Results</title>\n")
     file.write("<h1>Color Similarity Results</h1>\n")
-    file.write("<p><strong>NOTE</strong>: The accuracy score and happiness score are displayed at the very end of the file.</p>\n")
+    file.write("<p><strong>NOTE</strong>: The accuracy score and happiness score "
+               "are displayed at the very end of the file.</p>\n")
     file.write("</head>\n")
     file.write("<body>\n")
 
@@ -124,9 +125,8 @@ accuracy = total_score / 25200 * 100  # Goal: between 30% - 40%
 # print to console
 print('Accuracy:', accuracy)
 
-if i == 40:
-    # close the HTML file
-    with open("step1_results.html", "a") as file:
-        file.write("<h3>Accuracy: {}%</h3>\n".format(accuracy))
-        file.write("</body>\n")
-        file.write("</html>\n")
+# close the HTML file
+with open("step1_results.html", "a") as file:
+    file.write("<h3>Accuracy: {}%</h3>\n".format(accuracy))
+    file.write("</body>\n")
+    file.write("</html>\n")

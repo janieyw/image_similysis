@@ -17,7 +17,7 @@ crowd_data = np.loadtxt('./data/Crowd.txt', dtype = np.int32)
 similarity_scores = {}
 
 # Initialize the total score, which is the total crowd count
-total_score = 0;
+total_score = 0
 
 # Create and write in the HTML file
 with open("step2_results.html", "w") as file:
@@ -130,9 +130,8 @@ accuracy = total_score / 25200 * 100  # Goal: between 30% - 40%
 # print to console
 print('Accuracy:', accuracy)
 
-if i == 40:
-    # close the HTML file
-    with open("step2_results.html", "a") as file:
-        file.write("<h3>Accuracy: {}%</h3>\n".format(accuracy))
-        file.write("</body>\n")
-        file.write("</html>\n")
+# close the HTML file
+with open("step2_results.html", "a") as file:
+    file.write("<h3>Accuracy: {}%</h3>\n".format(accuracy))
+    file.write("</body>\n")
+    file.write("</html>\n")
