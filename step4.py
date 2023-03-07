@@ -56,11 +56,18 @@ for i in range(1, 41):
         query_left = query_binary_image[:, :43]
         query_right = query_binary_image[:, -43:]
 
-        # Reverse the columns of the left half
-        query_mirrored_left = cv.flip(query_right, 1)
+        # Reverse the columns of the right half
+        query_mirrored_right = cv.flip(query_right, 1)
+
+        # # Compute the shape distance of R' to L
+        # right_distance = np.equal(query_mirrored_right, query_left).astype(int)
+        #
+        # # Sum up over the pixels and divide by the number of pixels in L
+        # query_num_pixels_L = query_left.shape[0] * query_left.shape[1]
+        # query_score = np.sum(right_distance) / query_num_pixels_L
 
         # Compute the difference between left and right halves
-        query_diff = cv.absdiff(query_left, query_mirrored_left)
+        query_diff = cv.absdiff(query_left, query_mirrored_right)
 
         # Compute symmetry score as the average of pixel values
         query_score = np.mean(query_diff)
@@ -92,17 +99,24 @@ for i in range(1, 41):
                 target_left = target_binary_image[:, :43]
                 target_right = target_binary_image[:, -43:]
 
-                # Reverse the columns of the left half
-                target_mirrored_left = cv.flip(target_right, 1)
+                # Reverse the columns of the right half
+                target_mirrored_right = cv.flip(target_right, 1)
+
+                # # Compute the shape distance of R' to L
+                # target_distance = np.equal(target_mirrored_right, target_left).astype(int)
+                #
+                # # Sum up over the pixels and divide by the number of pixels in L
+                # target_num_pixels_L = target_left.shape[0] * target_left.shape[1]
+                # target_score = np.sum(target_distance) / target_num_pixels_L
 
                 # Compute the difference between left and right halves
-                target_diff = cv.absdiff(target_left, target_mirrored_left)
+                target_diff = cv.absdiff(target_left, target_mirrored_right)
 
                 # Compute symmetry score as the average of pixel values
                 target_score = np.mean(target_diff)
 
                 # Compute the normalized overlap distance
-                distance = (query_score - target_score) / (2 * 89 * 60)
+                distance = np.sum(np.abs(query_score - target_score)) / (2 * 89 * 60)
 
                 # Append the similarity score to the list for the query image
                 similarity_scores[query_file].append([distance, target_file])
