@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 import os
 
-# shape (for- vs. back-ground) distance
+# shape (symmetry) distance
 
 # Set the directory where the images are located
 image_dir = './data/images/'
@@ -123,7 +123,7 @@ for i in range(1, 41):
 
         # Sort the similarity scores for the query image by distance in ascending order
         similarity_scores[query_file].sort(key=lambda x: x[0])
-        print(similarity_scores[query_file])
+        # print(similarity_scores[query_file])
 
         # Select the top 3 similar images based on distance and add up their scores
         similar_images = []
