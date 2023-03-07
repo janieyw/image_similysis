@@ -100,7 +100,7 @@ for i in range(1, 41):
         print('\tTop 3 similar images:', ', '.join(similar_images))
 
         with open("step1_results.html", "a") as file:
-            file.write("<p>Query image: {}</p>\n".format(query_file[1:3]))
+            file.write("<p>Query image: <strong>{}</strong></p>\n".format(query_file[1:3]))
             file.write("<p>Score: {}</p>\n".format(score))
             file.write("<div>\n")
             query_path = os.path.join(image_dir, 'i{:02d}.jpg'.format(i))

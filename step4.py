@@ -48,7 +48,7 @@ for i in range(1, 41):
         # query_image = cv.Laplacian(query_image, cv.CV_64F)
 
         # Set the threshold values
-        threshold_value = 25
+        threshold_value = 67
 
         # Convert the image to binary black and white
         query_binary_image = cv.threshold(query_image, threshold_value, 255, cv.THRESH_BINARY)[1]
@@ -144,7 +144,7 @@ for i in range(1, 41):
         # print('\tTop 3 similar images:', ', '.join(similar_images))
 
         with open("step4_results.html", "a") as file:
-            file.write("<p>Query image: {}</p>\n".format(query_file[1:3]))
+            file.write("<p>Query image: <strong>{}</strong></p>\n".format(query_file[1:3]))
             file.write("<p>Score: {}</p>\n".format(score))
             file.write("<div>\n")
             query_path = os.path.join(image_dir, 'i{:02d}.jpg'.format(i))
