@@ -28,7 +28,7 @@ with open("step1_results.html", "w") as file:
     file.write("<head>\n")
     file.write("<title>Step 1: Color Similarity Results</title>\n")
     file.write("<h1>Step 1: Color Similarity Results</h1>\n")
-    file.write("<p><strong>NOTE</strong>: The accuracy score and happiness score "
+    file.write("<p><strong>NOTE</strong>: The total score, accuracy score, and happiness score "
                "are displayed at the very end of the file.</p>\n")
     file.write("</head>\n")
     file.write("<body>\n")
@@ -112,7 +112,6 @@ for i in range(1, 41):
                 crowd_count = crowd_data[i - 1][int(sim_img[1:3]) - 1]
                 score = crowd_count / (idx + 1)
                 file.write("<div>\n")
-
                 file.write("<img src='{}' height='80px' style='margin-right: 40px;'>\n".format(sim_path))
                 file.write("<p>Similar image {}: {}</p>\n".format(idx + 1, sim_img[1:3]))
                 file.write("<p>(Crowd count: {})</p>\n".format(crowd_count))
@@ -123,10 +122,11 @@ for i in range(1, 41):
 accuracy = total_score / 25200 * 100  # Goal: between 30% - 40%
 
 # print to console
-print('Accuracy:', accuracy)
+print('Step 1 Accuracy:', accuracy)
 
 # close the HTML file
 with open("step1_results.html", "a") as file:
+    file.write("<h3>Total score: {}%</h3>\n".format(total_score))
     file.write("<h3>Accuracy: {}%</h3>\n".format(accuracy))
     file.write("<h3>Happiness: 39</h3>\n")
     file.write("</body>\n")

@@ -116,7 +116,7 @@ for i in range(1, 41):
                 target_score = np.mean(target_diff)
 
                 # Compute the normalized distance
-                distance = np.sum(np.abs(query_score - target_score)) / (2 * 89 * 60)
+                distance = np.sum(np.abs(query_score - target_score)) / (2 * 89 * 60) * 100
 
                 # Append the similarity score to the list for the query image
                 similarity_scores[query_file].append([distance, target_file])
@@ -167,11 +167,12 @@ for i in range(1, 41):
 accuracy = total_score / 25200 * 100  # Goal: between 30% - 40%
 
 # print to console
-print('Accuracy:', accuracy)
+print('Step 4 Accuracy:', accuracy)
 
 # close the HTML file
 with open("step4_results.html", "a") as file:
+    file.write("<h3>Total score: {}%</h3>\n".format(total_score))
     file.write("<h3>Accuracy: {}%</h3>\n".format(accuracy))
-    file.write("<h3>Happiness: 29%</h3>\n")
+    file.write("<h3>Happiness: </h3>\n")
     file.write("</body>\n")
     file.write("</html>\n")
