@@ -2,13 +2,13 @@ import cv2 as cv
 import numpy as np
 import os
 
-# color distance (C)
+# Step 1: color distance (C)
 
 # Set the directory where the images are located
 image_dir = './data/images/'
 
 # Set the number of bits for each channel
-bits = 4  # Change this value to find the "Goldilocks" choice
+bits = 3  # the "Goldilocks"
 
 # Set the number of bins for each channel
 bins = 2 ** bits
@@ -26,8 +26,8 @@ total_score = 0
 with open("step1_results.html", "w") as file:
     file.write("<html>\n")
     file.write("<head>\n")
-    file.write("<title>Color Similarity Results</title>\n")
-    file.write("<h1>Color Similarity Results</h1>\n")
+    file.write("<title>Step 1: Color Similarity Results</title>\n")
+    file.write("<h1>Step 1: Color Similarity Results</h1>\n")
     file.write("<p><strong>NOTE</strong>: The accuracy score and happiness score "
                "are displayed at the very end of the file.</p>\n")
     file.write("</head>\n")
@@ -87,20 +87,20 @@ for i in range(1, 41):
 
         for k in range(3):
             img_num = similarity_scores[query_file][k][1][1:3]
-            total_score += crowd_data[i - 1][int(img_num) - 1]
+            score += crowd_data[i - 1][int(img_num) - 1]
             # Compute the score for the target image based on the crowdsource data
             similar_images.append(similarity_scores[query_file][k][1])
 
         # Add score for a row to the total score
         total_score += score
 
-        # print to console
-        print('Query image:', query_file)
-        print('\tScore:', score)
-        print('\tTop 3 similar images:', ', '.join(similar_images))
+        # # print to console
+        # print('Query image:', query_file)
+        # print('\tScore:', score)
+        # print('\tTop 3 similar images:', ', '.join(similar_images))
 
         with open("step1_results.html", "a") as file:
-            file.write("<p>Query image: <strong>{}</strong></p>\n".format(query_file[1:3]))
+            file.write("<hr><h3>Query image: {}</h3>\n".format(query_file[1:3]))
             file.write("<p>Score: {}</p>\n".format(score))
             file.write("<div>\n")
             query_path = os.path.join(image_dir, 'i{:02d}.jpg'.format(i))
@@ -128,5 +128,6 @@ print('Accuracy:', accuracy)
 # close the HTML file
 with open("step1_results.html", "a") as file:
     file.write("<h3>Accuracy: {}%</h3>\n".format(accuracy))
+    file.write("<h3>Happiness: 39</h3>\n")
     file.write("</body>\n")
     file.write("</html>\n")

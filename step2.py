@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 import os
 
-# texture distance (T)
+# Step 2: texture distance (T)
 
 # Set the directory where the images are located
 image_dir = './data/images/'
@@ -23,8 +23,8 @@ total_score = 0
 with open("step2_results.html", "w") as file:
     file.write("<html>\n")
     file.write("<head>\n")
-    file.write("<title>Texture Similarity Results</title>\n")
-    file.write("<h1>Texture Similarity Results</h1>\n")
+    file.write("<title>Step 2: Texture Similarity Results</title>\n")
+    file.write("<h1>Step 2: Texture Similarity Results</h1>\n")
     file.write("<p><strong>NOTE</strong>: The accuracy score and happiness score are displayed at the very end of the file.</p>\n")
     file.write("</head>\n")
     file.write("<body>\n")
@@ -99,13 +99,13 @@ for i in range(1, 41):
         # Add score for a row to the total score
         total_score += score
 
-        # print to console
-        print('Query image:', query_file)
-        print('\tScore:', score)
-        print('\tTop 3 similar images:', ', '.join(similar_images))
+        # # print to console
+        # print('Query image:', query_file)
+        # print('\tScore:', score)
+        # print('\tTop 3 similar images:', ', '.join(similar_images))
 
         with open("step2_results.html", "a") as file:
-            file.write("<p>Query image: <strong>{}</strong></p>\n".format(query_file[1:3]))
+            file.write("<hr><h3>Query image: {}</h3>\n".format(query_file[1:3]))
             file.write("<p>Score: {}</p>\n".format(score))
             file.write("<div>\n")
             query_path = os.path.join(image_dir, 'i{:02d}.jpg'.format(i))
@@ -133,5 +133,6 @@ print('Accuracy:', accuracy)
 # close the HTML file
 with open("step2_results.html", "a") as file:
     file.write("<h3>Accuracy: {}%</h3>\n".format(accuracy))
+    file.write("<h3>Happiness: 33</h3>\n")
     file.write("</body>\n")
     file.write("</html>\n")

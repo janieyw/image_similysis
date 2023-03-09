@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 import os
 
-# shape (symmetry) distance (Y)
+# Step 4: shape (symmetry) distance (Y)
 
 # Set the directory where the images are located
 image_dir = './data/images/'
@@ -20,8 +20,8 @@ total_score = 0
 with open("step4_results.html", "w") as file:
     file.write("<html>\n")
     file.write("<head>\n")
-    file.write("<title>Shape Similarity (symmetry) Results</title>\n")
-    file.write("<h1>Shape Similarity (symmetry) Results</h1>\n")
+    file.write("<title>Step 4: Shape Similarity (symmetry) Results</title>\n")
+    file.write("<h1>Step 4: Shape Similarity (symmetry) Results</h1>\n")
     file.write("<p><strong>NOTE</strong>: The accuracy score and happiness score "
                "are displayed at the very end of the file.</p>\n")
     file.write("</head>\n")
@@ -144,7 +144,7 @@ for i in range(1, 41):
         # print('\tTop 3 similar images:', ', '.join(similar_images))
 
         with open("step4_results.html", "a") as file:
-            file.write("<p>Query image: <strong>{}</strong></p>\n".format(query_file[1:3]))
+            file.write("<hr><h3>Query image: {}</h3>\n".format(query_file[1:3]))
             file.write("<p>Score: {}</p>\n".format(score))
             file.write("<div>\n")
             query_path = os.path.join(image_dir, 'i{:02d}.jpg'.format(i))
@@ -172,5 +172,6 @@ print('Accuracy:', accuracy)
 # close the HTML file
 with open("step4_results.html", "a") as file:
     file.write("<h3>Accuracy: {}%</h3>\n".format(accuracy))
+    file.write("<h3>Happiness: 29%</h3>\n")
     file.write("</body>\n")
     file.write("</html>\n")

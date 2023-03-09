@@ -7,7 +7,7 @@ import step2
 import step3
 import step4
 
-# overall distance, based on C, T, S, Y distances
+# Step 5: overall distance, based on C, T, S, Y distances
 
 # Set the directory where the images are located
 image_dir = './data/images/'

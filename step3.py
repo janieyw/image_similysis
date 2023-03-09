@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 import os
 
-# shape (for- vs. back-ground) distance (S)
+# Step 3: shape (for- vs. back-ground) distance (S)
 
 # Set the directory where the images are located
 image_dir = './data/images/'
@@ -20,8 +20,8 @@ total_score = 0
 with open("step3_results.html", "w") as file:
     file.write("<html>\n")
     file.write("<head>\n")
-    file.write("<title>Shape Similarity (fore- vs. back-ground) Results</title>\n")
-    file.write("<h1>Shape Similarity (fore- vs. back-ground) Results</h1>\n")
+    file.write("<title>Step 3: Shape Similarity (fore- vs. back-ground) Results</title>\n")
+    file.write("<h1>Step 3: Shape Similarity (fore- vs. back-ground) Results</h1>\n")
     file.write("<p><strong>NOTE</strong>: The accuracy score and happiness score "
                "are displayed at the very end of the file.</p>\n")
     file.write("</head>\n")
@@ -42,7 +42,7 @@ for i in range(1, 41):
         query_image = cv.imread(query_path)
 
         # Convert the query image to grayscale
-        query_image = (query_image[:,:,0] + query_image[:,:,1] + query_image[:,:,2]) / 3.0
+        # query_image = (query_image[:,:,0] + query_image[:,:,1] + query_image[:,:,2]) / 3.0
 
         # Apply Laplacian filter
         # query_image = cv.Laplacian(query_image, cv.CV_64F)
@@ -69,7 +69,7 @@ for i in range(1, 41):
                 target_image = cv.imread(target_path)
 
                 # Convert the target image to grayscale
-                target_image = (target_image[:,:,0] + target_image[:,:,1] + target_image[:,:,2]) / 3.0
+                # target_image = (target_image[:,:,0] + target_image[:,:,1] + target_image[:,:,2]) / 3.0
 
                 # Apply Laplacian filter
                 # target_image = cv.Laplacian(target_image, cv.CV_64F)
@@ -118,7 +118,7 @@ for i in range(1, 41):
         # print('\tTop 3 similar images:', ', '.join(similar_images))
 
         with open("step3_results.html", "a") as file:
-            file.write("<p>Query image: <strong>{}</strong></p>\n".format(query_file[1:3]))
+            file.write("<hr><h3>Query image: {}</h3>\n".format(query_file[1:3]))
             file.write("<p>Score: {}</p>\n".format(score))
             file.write("<div>\n")
             query_path = os.path.join(image_dir, 'i{:02d}.jpg'.format(i))
