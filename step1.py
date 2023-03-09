@@ -123,10 +123,11 @@ accuracy = total_score / 25200 * 100  # Goal: between 30% - 40%
 
 # print to console
 print('Step 1 Accuracy:', accuracy)
+print('Step 1 Total score:', total_score)
 
 # close the HTML file
 with open("step1_results.html", "a") as file:
-    file.write("<h3>Total score: {}%</h3>\n".format(total_score))
+    file.write("<h3>Total score: {}</h3>\n".format(total_score))
     file.write("<h3>Accuracy: {}%</h3>\n".format(accuracy))
     file.write("<h3>Happiness: 39</h3>\n")
     file.write("</body>\n")

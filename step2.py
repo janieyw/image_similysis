@@ -25,7 +25,8 @@ with open("step2_results.html", "w") as file:
     file.write("<head>\n")
     file.write("<title>Step 2: Texture Similarity Results</title>\n")
     file.write("<h1>Step 2: Texture Similarity Results</h1>\n")
-    file.write("<p><strong>NOTE</strong>: The accuracy score and happiness score are displayed at the very end of the file.</p>\n")
+    file.write("<p><strong>NOTE</strong>: The total score, accuracy score, and happiness score "
+               "are displayed at the very end of the file.</p>\n")
     file.write("</head>\n")
     file.write("<body>\n")
 
@@ -129,10 +130,11 @@ accuracy = total_score / 25200 * 100  # Goal: between 30% - 40%
 
 # print to console
 print('Step 2: Accuracy:', accuracy)
+print('Step 2 Total score:', total_score)
 
 # close the HTML file
 with open("step2_results.html", "a") as file:
-    file.write("<h3>Total score: {}%</h3>\n".format(total_score))
+    file.write("<h3>Total score: {}</h3>\n".format(total_score))
     file.write("<h3>Accuracy: {}%</h3>\n".format(accuracy))
     file.write("<h3>Happiness: 33</h3>\n")
     file.write("</body>\n")

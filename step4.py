@@ -22,7 +22,7 @@ with open("step4_results.html", "w") as file:
     file.write("<head>\n")
     file.write("<title>Step 4: Shape Similarity (symmetry) Results</title>\n")
     file.write("<h1>Step 4: Shape Similarity (symmetry) Results</h1>\n")
-    file.write("<p><strong>NOTE</strong>: The accuracy score and happiness score "
+    file.write("<p><strong>NOTE</strong>: The total score, accuracy score, and happiness score "
                "are displayed at the very end of the file.</p>\n")
     file.write("</head>\n")
     file.write("<body>\n")
@@ -59,13 +59,6 @@ for i in range(1, 41):
         # Reverse the columns of the right half
         query_mirrored_right = cv.flip(query_right, 1)
 
-        # # Compute the shape distance of R' to L
-        # right_distance = np.equal(query_mirrored_right, query_left).astype(int)
-        #
-        # # Sum up over the pixels and divide by the number of pixels in L
-        # query_num_pixels_L = query_left.shape[0] * query_left.shape[1]
-        # query_score = np.sum(right_distance) / query_num_pixels_L
-
         # Compute the difference between left and right halves
         query_diff = cv.absdiff(query_left, query_mirrored_right)
 
@@ -101,13 +94,6 @@ for i in range(1, 41):
 
                 # Reverse the columns of the right half
                 target_mirrored_right = cv.flip(target_right, 1)
-
-                # # Compute the shape distance of R' to L
-                # target_distance = np.equal(target_mirrored_right, target_left).astype(int)
-                #
-                # # Sum up over the pixels and divide by the number of pixels in L
-                # target_num_pixels_L = target_left.shape[0] * target_left.shape[1]
-                # target_score = np.sum(target_distance) / target_num_pixels_L
 
                 # Compute the difference between left and right halves
                 target_diff = cv.absdiff(target_left, target_mirrored_right)
@@ -168,11 +154,12 @@ accuracy = total_score / 25200 * 100  # Goal: between 30% - 40%
 
 # print to console
 print('Step 4 Accuracy:', accuracy)
+print('Step 4 Total score:', total_score)
 
 # close the HTML file
 with open("step4_results.html", "a") as file:
-    file.write("<h3>Total score: {}%</h3>\n".format(total_score))
+    file.write("<h3>Total score: {}</h3>\n".format(total_score))
     file.write("<h3>Accuracy: {}%</h3>\n".format(accuracy))
-    file.write("<h3>Happiness: </h3>\n")
+    file.write("<h3>Happiness: 35</h3>\n")
     file.write("</body>\n")
     file.write("</html>\n")

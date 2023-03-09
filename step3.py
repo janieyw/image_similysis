@@ -22,7 +22,7 @@ with open("step3_results.html", "w") as file:
     file.write("<head>\n")
     file.write("<title>Step 3: Shape Similarity (fore- vs. back-ground) Results</title>\n")
     file.write("<h1>Step 3: Shape Similarity (fore- vs. back-ground) Results</h1>\n")
-    file.write("<p><strong>NOTE</strong>: The accuracy score and happiness score "
+    file.write("<p><strong>NOTE</strong>: The total score, accuracy score, and happiness score "
                "are displayed at the very end of the file.</p>\n")
     file.write("</head>\n")
     file.write("<body>\n")
@@ -141,12 +141,13 @@ for i in range(1, 41):
 accuracy = total_score / 25200 * 100  # Goal: between 30% - 40%
 
 # print to console
-print('Step 3: Accuracy:', accuracy)
+print('Step 3 Accuracy:', accuracy)
+print('Step 3 Total score:', total_score)
 
 # close the HTML file
 with open("step3_results.html", "a") as file:
-    file.write("<h3>Total score: {}%</h3>\n".format(total_score))
+    file.write("<h3>Total score: {}</h3>\n".format(total_score))
     file.write("<h3>Accuracy: {}%</h3>\n".format(accuracy))
-    file.write("<h3>Happiness: \n")
+    file.write("<h3>Happiness: 29\n")
     file.write("</body>\n")
     file.write("</html>\n")
