@@ -25,10 +25,45 @@ similarity_scores = {}
 # Initialize the total score, which is the total crowd count
 total_score = 0
 
-C_weight = 1
-T_weight = 0
-S_weight = 0
-Y_weight = 0
+C_weight = 0.6
+T_weight = 0.1
+S_weight = 0.2
+Y_weight = 0.1
+
+def minimize_distance(C_score, T_score, S_score, Y_score, learning_rate=0.005, max_iterations=70, tolerance=0.8):
+    # initialize weights
+    C_weight = T_weight = S_weight = Y_weight = 0.25
+
+    # repeat until convergence or maximum iterations reached
+    for i in range(max_iterations):
+        # calculate distance using current weights
+        distance = C_weight * C_score + T_weight * T_score + S_weight * S_score + Y_weight * Y_score
+
+        # calculate gradients
+        C_gradient = C_score
+        T_gradient = T_score
+        S_gradient = S_score
+        Y_gradient = Y_score
+
+        # update weights using gradient descent
+        C_weight = max(min(C_weight - learning_rate * C_gradient, 1), 0)
+        T_weight = max(min(T_weight - learning_rate * T_gradient, 1), 0)
+        S_weight = max(min(S_weight - learning_rate * S_gradient, 1), 0)
+        Y_weight = max(min(Y_weight - learning_rate * Y_gradient, 1), 0)
+
+        # normalize weights
+        total_weight = C_weight + T_weight + S_weight + Y_weight
+        C_weight /= total_weight
+        T_weight /= total_weight
+        S_weight /= total_weight
+        Y_weight /= total_weight
+
+        # check for convergence
+        if abs(distance - (C_weight * C_score + T_weight * T_score + S_weight * S_score + Y_weight * Y_score)) < tolerance:
+            break
+
+    # return optimal weights
+    return C_weight, T_weight, S_weight, Y_weight
 
 # Create and write in the HTML file
 with open("step5_results.html", "w") as file:
@@ -85,6 +120,8 @@ for i in range(1, 41):
                     S_score = step3_scores[query_file][index][0]
                     Y_score = step4_scores[query_file][index][0]
 
+                # C_weight, T_weight, S_weight, Y_weight = minimize_distance(C_score, T_score, S_score, Y_score)
+
                 # Compute the overall normalized L1 distance
                 distance = C_weight * C_score + T_weight * T_score + S_weight * S_score + Y_weight * Y_score
 
@@ -93,7 +130,7 @@ for i in range(1, 41):
 
         # Sort the similarity scores for the query image by distance in ascending order
         similarity_scores[query_file].sort(key = lambda x : x[0])
-        print(similarity_scores[query_file])
+        # print(similarity_scores[query_file])
 
         # Select the top 3 similar images based on distance and add up their scores
         similar_images = []
@@ -139,6 +176,8 @@ accuracy = total_score / 25200 * 100  # Goal: between 30% - 40%
 # print to console
 print('Step 5 Accuracy:', accuracy)
 print('Step 5 Total score:', total_score)
+print('A: {}, B: {}, C: {}, D: {}'.format(C_weight, T_weight, S_weight, Y_weight))
+print(C_weight + T_weight + S_weight + Y_weight)
 
 # close the HTML file
 with open("step5_results.html", "a") as file:
