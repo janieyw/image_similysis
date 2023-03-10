@@ -60,11 +60,15 @@ for i in range(1, 41):
         # Load the query image
         query_image = cv.imread(query_path)
 
+        index = -1
+
         # Iterate through all the target images in the directory
         for j in range(1, 41):
             # Skip the query image itself
             if i == j:
                 continue
+
+            index += 1
 
             # Generate the file name for the target image
             target_file = 'i{:02d}.ppm'.format(j)
@@ -75,22 +79,21 @@ for i in range(1, 41):
                 # Load the target image
                 target_image = cv.imread(target_path)
 
-                if j < 40:
-                    C_score = step1_scores[query_file][j - 1][0]
-                    T_score = step2_scores[query_file][j - 1][0]
-                    S_score = step3_scores[query_file][j - 1][0]
-                    Y_score = step4_scores[query_file][j - 1][0]
+                if index < 40:
+                    C_score = step1_scores[query_file][index][0]
+                    T_score = step2_scores[query_file][index][0]
+                    S_score = step3_scores[query_file][index][0]
+                    Y_score = step4_scores[query_file][index][0]
 
                 # Compute the overall normalized L1 distance
-                # distance = C_weight * C_score + T_weight * T_score + S_weight * S_score + Y_weight * Y_score
-                distance = 1 * C_score + 0 * T_score + 0 * S_score + 0 * Y_score
+                distance = C_weight * C_score + T_weight * T_score + S_weight * S_score + Y_weight * Y_score
 
                 # Append the similarity score to the list for the query image
                 similarity_scores[query_file].append([distance, target_file])
 
         # Sort the similarity scores for the query image by distance in ascending order
         similarity_scores[query_file].sort(key = lambda x : x[0])
-        # print(similarity_scores[query_file])
+        print(similarity_scores[query_file])
 
         # Select the top 3 similar images based on distance and add up their scores
         similar_images = []
