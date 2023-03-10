@@ -129,7 +129,7 @@ for i in range(1, 41):
 accuracy = total_score / 25200 * 100  # Goal: between 30% - 40%
 
 # print to console
-print('Step 2: Accuracy:', accuracy)
+print('Step 2 Accuracy:', accuracy)
 print('Step 2 Total score:', total_score)
 
 # close the HTML file

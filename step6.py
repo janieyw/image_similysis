@@ -2,40 +2,32 @@ import cv2 as cv
 import numpy as np
 import os
 
-from step1 import similarity_scores
-step1_scores = similarity_scores
-from step2 import similarity_scores
-step2_scores = similarity_scores
-from step3 import similarity_scores
-step3_scores = similarity_scores
-from step4 import similarity_scores
-step4_scores = similarity_scores
-
-# Step 5: Overall distance
+# Step 6: Crowd vs. Me
 
 # Set the directory where the images are located
 image_dir = './data/images/'
 
+# Set the number of bits for each channel
+bits = 3  # the "Goldilocks"
+
+# Set the number of bins for each channel
+bins = 2 ** bits
+
 # Load the crowdsource data
-crowd_data = np.loadtxt('./data/Crowd.txt', dtype=np.int32)
+personal_data = np.loadtxt('./data/Personal.txt', dtype=np.int32)
 
 # Initialize the similarity scores dictionary
 similarity_scores = {}
 
-# Initialize the total score, which is the total crowd count
+# Initialize the total_score, which is the total crowd count
 total_score = 0
 
-C_weight = 1
-T_weight = 0
-S_weight = 0
-Y_weight = 0
-
 # Create and write in the HTML file
-with open("step5_results.html", "w") as file:
+with open("step6_results.html", "w") as file:
     file.write("<html>\n")
     file.write("<head>\n")
-    file.write("<title>Step 5: Shape Similarity Results</title>\n")
-    file.write("<h1>Step 5: Shape Similarity Results</h1>\n")
+    file.write("<title>Step 6: Overall Similarity (Crowd vs. Me) Results</title>\n")
+    file.write("<h1>Step 6: Overall Similarity (Crowd vs. Me) Results</h1>\n")
     file.write("<p><strong>NOTE</strong>: The total score, accuracy score, and happiness score "
                "are displayed at the very end of the file.</p>\n")
     file.write("</head>\n")
@@ -47,11 +39,6 @@ for i in range(1, 41):
     query_file = 'i{:02d}.ppm'.format(i)
     query_path = os.path.join(image_dir, query_file)
 
-    step1_scores[query_file].sort(key=lambda x: x[1])
-    step2_scores[query_file].sort(key=lambda x: x[1])
-    step3_scores[query_file].sort(key=lambda x: x[1])
-    step4_scores[query_file].sort(key=lambda x: x[1])
-
     # Initialize the similarity scores list for the query image
     similarity_scores[query_file] = []
 
@@ -59,6 +46,12 @@ for i in range(1, 41):
     if os.path.exists(query_path):
         # Load the query image
         query_image = cv.imread(query_path)
+
+        # Calculate the 3D color histogram for the query image
+        query_hist = cv.calcHist([query_image], [0, 1, 2], None, [bins, bins, bins], [0, 255, 0, 255, 0, 255])
+
+        # Normalize the query histogram
+        # query_hist = cv.normalize(query_hist, query_hist, alpha=0, beta=1, norm_type=cv.NORM_MINMAX)
 
         # Iterate through all the target images in the directory
         for j in range(1, 41):
@@ -75,15 +68,11 @@ for i in range(1, 41):
                 # Load the target image
                 target_image = cv.imread(target_path)
 
-                if j < 40:
-                    C_score = step1_scores[query_file][j - 1][0]
-                    T_score = step2_scores[query_file][j - 1][0]
-                    S_score = step3_scores[query_file][j - 1][0]
-                    Y_score = step4_scores[query_file][j - 1][0]
+                # Calculate the 3D color histogram for the target image
+                target_hist = cv.calcHist([target_image], [0, 1, 2], None, [bins, bins, bins], [0, 255, 0, 255, 0, 255])
 
-                # Compute the overall normalized L1 distance
-                # distance = C_weight * C_score + T_weight * T_score + S_weight * S_score + Y_weight * Y_score
-                distance = 1 * C_score + 0 * T_score + 0 * S_score + 0 * Y_score
+                # Compute the normalized L1 distance between the query and target histograms
+                distance = np.sum(np.abs(query_hist - target_hist)) / (2 * 60 * 89)
 
                 # Append the similarity score to the list for the query image
                 similarity_scores[query_file].append([distance, target_file])
@@ -98,11 +87,11 @@ for i in range(1, 41):
 
         for k in range(3):
             img_num = similarity_scores[query_file][k][1][1:3]
-            score += crowd_data[i - 1][int(img_num) - 1]
+            score += personal_data[i - 1][int(img_num) - 1]
             # Compute the score for the target image based on the crowdsource data
             similar_images.append(similarity_scores[query_file][k][1])
 
-        # Add total score for a row to the grand total
+        # Add score for a row to the total score
         total_score += score
 
         # # print to console
@@ -110,7 +99,7 @@ for i in range(1, 41):
         # print('\tScore:', score)
         # print('\tTop 3 similar images:', ', '.join(similar_images))
 
-        with open("step5_results.html", "a") as file:
+        with open("step6_results.html", "a") as file:
             file.write("<hr><h3>Query image: {}</h3>\n".format(query_file[1:3]))
             file.write("<p>Score: {}</p>\n".format(score))
             file.write("<div>\n")
@@ -120,10 +109,9 @@ for i in range(1, 41):
 
             for idx, sim_img in enumerate(similar_images):
                 sim_path = os.path.join(image_dir, 'i{}.jpg'.format(sim_img[1:3]))
-                crowd_count = crowd_data[i - 1][int(sim_img[1:3]) - 1]
+                crowd_count = personal_data[i - 1][int(sim_img[1:3]) - 1]
                 score = crowd_count / (idx + 1)
                 file.write("<div>\n")
-
                 file.write("<img src='{}' height='80px' style='margin-right: 40px;'>\n".format(sim_path))
                 file.write("<p>Similar image {}: {}</p>\n".format(idx + 1, sim_img[1:3]))
                 file.write("<p>(Crowd count: {})</p>\n".format(crowd_count))
@@ -131,16 +119,16 @@ for i in range(1, 41):
 
             file.write("</div>\n")
 
-accuracy = total_score / 25200 * 100  # Goal: between 30% - 40%
+accuracy = total_score / 240 * 100  # Goal: between 30% - 40%
 
 # print to console
-print('Step 5 Accuracy:', accuracy)
-print('Step 5 Total score:', total_score)
+print('Step 6 Accuracy:', accuracy)
+print('Step 6 Total score:', total_score)
 
 # close the HTML file
-with open("step5_results.html", "a") as file:
+with open("step6_results.html", "a") as file:
     file.write("<h3>Total score: {}</h3>\n".format(total_score))
     file.write("<h3>Accuracy: {}%</h3>\n".format(accuracy))
-    file.write("<h3>Happiness: 39\n")
+    file.write("<h3>Happiness: 39</h3>\n")
     file.write("</body>\n")
     file.write("</html>\n")
